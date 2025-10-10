@@ -1,7 +1,6 @@
 import warnings
 
 import numpy as np
-
 from cardillo.math.algebra import ax2skew, cross3
 from cardillo.math.approx_fprime import approx_fprime
 
@@ -439,6 +438,7 @@ class ProjectedPositionOrientationBase:
         A_IJ0=None,
         xi1=None,
         xi2=None,
+        **kwargs,
     ):
         self.subsystem1 = subsystem1
         self.subsystem2 = subsystem2
@@ -464,6 +464,9 @@ class ProjectedPositionOrientationBase:
 
         self.constrain_translation = self.nla_g_trans > 0
         self.constrain_orientation = self.nla_g_rot > 0
+
+        if "name" in kwargs:
+            self.name = kwargs.get("name")
 
     def assembler_callback(self):
         local_qDOF1, local_qDOF2 = concatenate_qDOF(self)

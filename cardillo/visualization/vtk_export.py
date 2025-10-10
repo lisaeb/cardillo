@@ -125,7 +125,7 @@ class Export:
         frames = len(solution.t)
         # target_frames = min(len(t), 100)
         animation_time_ = solution.t[-1] - solution.t[0]
-        target_frames = max(1, int(animation_time_ * self.fps))
+        target_frames = max(2, int(animation_time_ * self.fps))
         frac = max(1, int(frames / target_frames))
 
         frames = target_frames

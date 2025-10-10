@@ -7,6 +7,7 @@ class SolverSummary:
         self.newton_n_iter_list = []
         self.newton_abs_errors = []
         self.n_lu = 0
+        self.converged = True
 
     def clear(self):
         self.fixed_point_n_iter_list = []
