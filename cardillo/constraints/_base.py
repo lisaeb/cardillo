@@ -468,7 +468,6 @@ class ProjectedPositionOrientationBase:
 
         if "name" in kwargs:
             self.name = kwargs.get("name")
-        
 
     def assembler_callback(self):
         local_qDOF1, local_qDOF2 = concatenate_qDOF(self)

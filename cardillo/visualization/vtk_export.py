@@ -78,7 +78,7 @@ def make_ugrid(points, cells, point_data, cell_data):
 class Export:
     def __init__(
         self,
-        path: Path,
+        path,
         folder_name: str,
         overwrite: bool,
         fps: float,

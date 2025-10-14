@@ -57,19 +57,21 @@ class Solution:
         n1 = len(self.t)
         n2 = len(other.t)
         keys = [*self.__dict__.keys()]
-        keys.remove("system") # identical in self and other
-        keys.remove("solver_summary") # special handling
-        new_dict = dict(system=self.system, solver_summary=[self.solver_summary, other.solver_summary])
+        keys.remove("system")  # identical in self and other
+        keys.remove("solver_summary")  # special handling
+        new_dict = dict(
+            system=self.system,
+            solver_summary=[self.solver_summary, other.solver_summary],
+        )
         for key in keys:
             try:
-                new_dict[key] = np.concatenate([self.__dict__[key], other.__dict__[key]])
+                new_dict[key] = np.concatenate(
+                    [self.__dict__[key], other.__dict__[key]]
+                )
             except ValueError:
                 new_dict[key] = None
-        sol = Solution(
-            **new_dict
-        )
+        sol = Solution(**new_dict)
         return sol
-
 
     def __iter__(self):
         return self.SolutionIterator(self)
