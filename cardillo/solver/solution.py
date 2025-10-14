@@ -1,6 +1,7 @@
 from collections import namedtuple
 
 import dill
+import numpy as np
 
 
 def save_solution(sol, filename):
@@ -48,6 +49,27 @@ class Solution:
 
     def save(self, filename):
         save_solution(self, filename)
+
+    def __add__(self, other):
+        # system must be the same object
+        if self.system is not other.system:
+            raise RuntimeError("Systems of solutions are not identical.")
+        n1 = len(self.t)
+        n2 = len(other.t)
+        keys = [*self.__dict__.keys()]
+        keys.remove("system") # identical in self and other
+        keys.remove("solver_summary") # special handling
+        new_dict = dict(system=self.system, solver_summary=[self.solver_summary, other.solver_summary])
+        for key in keys:
+            try:
+                new_dict[key] = np.concatenate([self.__dict__[key], other.__dict__[key]])
+            except ValueError:
+                new_dict[key] = None
+        sol = Solution(
+            **new_dict
+        )
+        return sol
+
 
     def __iter__(self):
         return self.SolutionIterator(self)

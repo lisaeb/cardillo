@@ -2,9 +2,10 @@ import numpy as np
 from scipy.sparse import bmat
 from scipy.sparse.linalg import splu
 
-from cardillo.math.prox import NegativeOrthant, estimate_prox_parameter
-from cardillo.math.algebra import norm
 from cardillo.definitions import IS_CLOSE_ATOL
+from cardillo.math.algebra import norm
+from cardillo.math.prox import NegativeOrthant, estimate_prox_parameter
+
 from .solver_options import SolverOptions
 
 
@@ -33,6 +34,45 @@ def consistent_initial_conditions(
 
     q_dot0 = system.q_dot(t0, q0, u0)
 
+    # compute constant contact quantities
+    g_N = system.g_N(t0, q0)
+    g_N_dot = system.g_N_dot(t0, q0, u0)
+    A_N = np.isclose(g_N, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
+    B_N = A_N * np.isclose(g_N_dot, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
+
+    assert np.all(
+        np.logical_or(g_N >= 0, A_N)
+    ), "Initial conditions do not fulfill g_N0!"
+    assert np.all(
+        np.logical_or(A_N * g_N_dot >= 0, B_N)
+    ), "Initial conditions do not fulfill g_N_dot0!"
+
+    # compute constant contact quantities
+    g_N = system.g_N(t0, q0)
+    g_N_dot = system.g_N_dot(t0, q0, u0)
+    A_N = np.isclose(g_N, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
+    B_N = A_N * np.isclose(g_N_dot, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
+
+    assert np.all(
+        np.logical_or(g_N >= 0, A_N)
+    ), "Initial conditions do not fulfill g_N0!"
+    assert np.all(
+        np.logical_or(A_N * g_N_dot >= 0, B_N)
+    ), "Initial conditions do not fulfill g_N_dot0!"
+
+    # compute constant contact quantities
+    g_N = system.g_N(t0, q0)
+    g_N_dot = system.g_N_dot(t0, q0, u0)
+    A_N = np.isclose(g_N, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
+    B_N = A_N * np.isclose(g_N_dot, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
+
+    assert np.all(
+        np.logical_or(g_N >= 0, A_N)
+    ), "Initial conditions do not fulfill g_N0!"
+    assert np.all(
+        np.logical_or(A_N * g_N_dot >= 0, B_N)
+    ), "Initial conditions do not fulfill g_N_dot0!"
+
     if (
         not options.compute_consistent_initial_conditions or system.nu == 0
     ):  # second case can happen during debugging, when only frames are added to the system
@@ -42,11 +82,17 @@ def consistent_initial_conditions(
             u0,
             q_dot0,
             np.zeros(system.nu),
-            np.zeros(system.nla_g),
+            # np.zeros(system.nla_g),
+            system.la_g0,
             np.zeros(system.nla_gamma),
             np.zeros(system.nla_c),
             np.zeros(system.nla_N),
             np.zeros(system.nla_F),
+            # system.u_dot0,
+            # system.la_gamma0,
+            # system.la_c0,
+            # system.la_N0,
+            # system.la_F0,
         )
 
     # evaluate constant quantities
@@ -63,19 +109,6 @@ def consistent_initial_conditions(
 
     W_c = system.W_c(t0, q0)
     la_c0 = system.la_c(t0, q0, u0)
-
-    # compute constant contact quantities
-    g_N = system.g_N(t0, q0)
-    g_N_dot = system.g_N_dot(t0, q0, u0)
-    A_N = np.isclose(g_N, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
-    B_N = A_N * np.isclose(g_N_dot, np.zeros(system.nla_N), atol=IS_CLOSE_ATOL)
-
-    assert np.all(
-        np.logical_or(g_N >= 0, A_N)
-    ), "Initial conditions do not fulfill g_N0!"
-    assert np.all(
-        np.logical_or(A_N * g_N_dot >= 0, B_N)
-    ), "Initial conditions do not fulfill g_N_dot0!"
 
     # get set of active normal contacts
     B_N = np.where(B_N)[0]

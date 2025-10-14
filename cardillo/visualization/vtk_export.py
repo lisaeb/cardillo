@@ -1,8 +1,10 @@
 from pathlib import Path
 from shutil import rmtree
 from xml.dom import minidom
+
 import numpy as np
 import vtk
+
 from cardillo.solver import Solution
 
 
@@ -87,7 +89,7 @@ class Export:
         self.folder = self.__create_vtk_folder(folder_name, overwrite)
         self.fps = fps
         self.system = solution.system
-        self.write_ascii = (write_ascii,)
+        self.write_ascii = write_ascii
         self.__prepare_data(solution)
 
     # helper functions

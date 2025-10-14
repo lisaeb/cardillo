@@ -1,12 +1,13 @@
-import numpy as np
 import warnings
 from copy import deepcopy
+
+import numpy as np
 from scipy.sparse import diags
 
-from cardillo.utility.coo_matrix import CooMatrix
 from cardillo.discrete.frame import Frame
 from cardillo.discrete.meshed import Axis
 from cardillo.solver import consistent_initial_conditions
+from cardillo.utility.coo_matrix import CooMatrix
 from cardillo.visualization import Export
 
 properties = []
@@ -205,6 +206,7 @@ class System:
         self.nla_F = 0
         q0 = []
         u0 = []
+        la_g0 = []
         e_N = []
         e_F = []
         self.constant_force_reservoir = False
@@ -256,6 +258,10 @@ class System:
             if hasattr(contr, "nla_g"):
                 contr.la_gDOF = np.arange(0, contr.nla_g) + self.nla_g
                 self.nla_g += contr.nla_g
+                if hasattr(contr, "la_g0"):
+                    la_g0.extend(contr.la_g0.tolist())
+                else:
+                    la_g0.extend(contr.nla_g * [0])
 
             # if contribution has constraints on velocity level address constraint coordinates
             if hasattr(contr, "nla_gamma"):
@@ -293,6 +299,7 @@ class System:
         # compute consisten initial conditions
         self.q0 = np.array(q0)
         self.u0 = np.array(u0)
+        self.la_g0 = np.array(la_g0)
 
         # compute constant system parts
         # - parts of the mass matrix
