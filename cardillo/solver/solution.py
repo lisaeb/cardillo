@@ -49,6 +49,22 @@ class Solution:
 
     def save(self, filename):
         save_solution(self, filename)
+    
+    def each_nth_el(self, n):
+        keys = [*self.__dict__.keys()]
+        keys.remove("system") 
+        keys.remove("solver_summary")  # special handling
+        new_dict = dict(
+            system=self.system,
+            solver_summary=self.solver_summary,
+        )
+        for key in keys:
+            try:
+                new_dict[key] = self.__dict__[key][::n]
+            except:
+                new_dict[key] = None
+        sol = Solution(**new_dict)
+        return sol
 
     def __add__(self, other):
         # system must be the same object
