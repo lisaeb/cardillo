@@ -1,5 +1,5 @@
 import numpy as np
-from cardillo.math import norm, cross3, ax2skew, ax2skew_a, LeviCivita3, ax2skew_squared
+from cardillo.math import LeviCivita3, ax2skew, ax2skew_a, ax2skew_squared, cross3, norm
 
 # for small angles we use first order approximations of the equations since
 # most of the SO(3) and SE(3) equations get singular for psi -> 0.
@@ -683,7 +683,7 @@ def quatprod(P, Q):
     q0, q = Q[0, None], Q[1:]
     z0 = p0 * q0 - p @ q
     z = p0 * q + q0 * p + cross3(p, q)
-    return np.array([z0, *z])
+    return np.array([*z0, *z])
 
 
 def axis_angle2quat(axis, angle):
