@@ -16,7 +16,7 @@ from cardillo.rods.cosseratRod import (
     make_CosseratRod,
 )
 from cardillo.solver import Newton, SolverOptions
-
+from cardillo.utility.sensor import Sensor, SensorRecords
 
 """ Derived cantilever beam example. 
 Purpose is to show the different exports. And to be an example how to define the export of rods.
@@ -80,6 +80,12 @@ def cantilever(
     ##########
     clamping = RigidConnection(system.origin, cantilever, xi2=0)
     system.add(cantilever, clamping)
+    markers = [
+        Sensor(cantilever, xi=0.0, name="sensor_start"),
+        Sensor(cantilever, xi=0.5, name="sensor_middle"),
+        Sensor(cantilever, xi=1.0, name="sensor_end"),
+    ]
+    system.add(*markers)
 
     ###############
     # applied loads
@@ -114,6 +120,8 @@ def cantilever(
 
     # VTK export
     dir_name = Path(__file__).parent
+    records = [SensorRecords.r_OP, SensorRecords.A_IB]
+    [m.save(dir_name, "csv", sol, records) for m in markers]
     if VTK_export:
         from copy import deepcopy
 

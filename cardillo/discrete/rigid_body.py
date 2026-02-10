@@ -8,7 +8,7 @@ from cardillo.math import (
     ax2skew,
     norm,
     Exp_SO3_quat,
-    Exp_SO3_quat_p,
+    Exp_SO3_quat_P,
     T_SO3_inv_quat,
     T_SO3_inv_quat_P,
     Spurrier,
@@ -72,6 +72,7 @@ class RigidBody:
         self.__M = np.zeros((self.nu, self.nu), dtype=float)
         self.__M[:3, :3] = self.mass * np.eye(3, dtype=float)
         self.__M[3:, 3:] = self.B_Theta_C
+        self.constant_mass_matrix = True
 
         self.name = name
 
@@ -167,7 +168,7 @@ class RigidBody:
     )
     def A_IB_q(self, t, q, xi=None):
         A_IB_q = np.zeros((3, 3, self.nq), dtype=q.dtype)
-        A_IB_q[:, :, 3:] = Exp_SO3_quat_p(q[3:])
+        A_IB_q[:, :, 3:] = Exp_SO3_quat_P(q[3:])
         return A_IB_q
 
     @cachedmethod(
