@@ -285,14 +285,15 @@ class RigidBody:
     # export
     ########
     def export(self, sol_i, **kwargs):
-        points = [self.r_OP(sol_i.t, sol_i.q[self.qDOF])]
-        vel = self.v_P(sol_i.t, sol_i.q[self.qDOF], sol_i.u[self.uDOF])
-        omega = self.A_IB(sol_i.t, sol_i.q[self.qDOF]) @ self.B_Omega(
-            sol_i.t, sol_i.q[self.qDOF], sol_i.u[self.uDOF]
-        )
+        r_OP = sol_i.q[self.qDOF[:3]]
+        v_P = sol_i.u[self.uDOF[:3]]
+        P_IB = sol_i.q[self.qDOF[3:]]
+        B_Omega = sol_i.u[self.uDOF[3:]]
 
-        ex, ey, ez = self.A_IB(sol_i.t, sol_i.q[self.qDOF]).T
-
+        points = [r_OP]
         cells = [(VTK_VERTEX, [0])]
-        cell_data = dict(v=[vel], Omega=[omega], ex=[ex], ey=[ey], ez=[ez])
-        return points, cells, None, cell_data
+        point_data = dict(P_IB=[P_IB])
+        A_IB = Exp_SO3_quat(P_IB)
+        ex, ey, ez = A_IB.T
+        cell_data = dict(v=[v_P], Omega=[A_IB @ B_Omega], ex=[ex], ey=[ey], ez=[ez])
+        return points, cells, point_data, cell_data

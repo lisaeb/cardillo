@@ -111,10 +111,11 @@ def Meshed(Base):
 
                 kwargs.update({"mass": mass, "B_Theta_C": B_Theta_C})
 
+            self.base_export = kwargs.pop("base_export", False)
             super().__init__(**kwargs)
 
         def export(self, sol_i, base_export=False, **kwargs):
-            if base_export:
+            if base_export or self.base_export:
                 return super().export(sol_i, **kwargs)
             else:
                 r_OC = self.r_OP(

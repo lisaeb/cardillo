@@ -1,6 +1,6 @@
 import numpy as np
 from vtk import VTK_VERTEX
-from cardillo.math import skew2ax
+from cardillo.math import skew2ax, Log_SO3_quat
 from cardillo.utility.check_time_derivatives import check_time_derivatives
 
 
@@ -149,12 +149,14 @@ class Frame:
     def export(self, sol_i, **kwargs):
         points = [self.r_OP(sol_i.t)]
         cells = [(VTK_VERTEX, [0])]
-        ex, ey, ez = self.A_IB(sol_i.t).T
+        A_IB = self.A_IB(sol_i.t)
+        ex, ey, ez = A_IB.T
+        point_data = dict(P_IB=[Log_SO3_quat(A_IB)])
         cell_data = dict(
             v=[self.v_P(sol_i.t)],
-            Omega=[self.A_IB(sol_i.t) @ self.B_Omega(sol_i.t)],
+            Omega=[A_IB @ self.B_Omega(sol_i.t)],
             ex=[ex],
             ey=[ey],
             ez=[ez],
         )
-        return points, cells, None, cell_data
+        return points, cells, point_data, cell_data
