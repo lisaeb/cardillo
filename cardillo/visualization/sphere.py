@@ -512,7 +512,7 @@ points = array(
     ]
 ).reshape(-1, 3)
 
-connectivity = arange(125)[None]
+connectivity = arange(125)
 
 
 def vtk_sphere(radius):
@@ -527,5 +527,5 @@ def vtk_sphere(radius):
         point_data: additional data needed for Bezier Hexahedron cell
     """
     cell = (VTK_BEZIER_HEXAHEDRON, connectivity)
-    point_data = {"RationalWeights": weights}
+    point_data = {"RationalWeights": weights[:, None]}
     return radius * points, cell, point_data
